@@ -1,0 +1,1274 @@
+openapi: 3.0.0
+
+servers:
+  - url: 'https://api.nowsignage.com/v1'
+  
+info:
+  description:
+    The NowSignage platform API.
+    
+    For a quick overview of our API, please <a href="https://www.nowsignage.com/api-docs" target="_blank">check out our API Guide</a>.
+  version: "1.0.0-oas3"
+  title: NowSignage API
+  contact:
+    name: the NowSignage Engineering Team
+    email: info@nowsignage.com
+
+tags:
+  - name: Base
+    description: General actions that do not fall under any specific route group.
+  - name: Channels
+    description: Operations for accessing social media folders for a Profile
+  - name: Profiles
+    description: Operations for managing an accounts profiles.
+  - name: Users
+    description: Manage and register users within the Account.
+  - name: Screens
+    description: Operations available to manage the NowSignage for Screens objects.
+  - name: Schedules
+    description: Manage the timetables scheduled to a Screen.
+  - name: Timetables
+    description: Operations available to manage the Timetables.
+  - name: Timetable Blocks
+    description: Operations to manage the Loops associated with a Timetable.
+  - name: Loops
+    description: Operations to manage the lists of content that can be played in sequence.
+  - name: Loop Items
+    description: Operations to modify and create individual items that appear within a Loop.
+  - name: Scoops
+    description: Operations available to manage the NowSignage for Websites objects.
+  - name: Image Assets
+    description: Operations for the management of Image Assets within the parent Profile.
+  - name: Video Assets
+    description: Operations for the management of Video Assets within the parent Profile.
+  
+paths:
+  /:
+    get:
+      summary: Root url for the API
+      tags:
+        - Base
+      responses: 
+        200:
+          description: "the API is operating successfully, and the token provided was authenticated."
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+        404:
+          $ref: "#/components/responses/404"
+  
+  # Channel Routes
+  /profiles/{profile_id}/channels:
+    get:
+      summary: Retrieves information about the channels/folders present within the profile.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Channels
+      responses:
+        200:
+          description: "Successfully retrieves the Channel & entries data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+  /channels/{id}:
+    get:
+      summary: Retrieves social media content for a specific Channel
+      tags:
+        - Channels
+      parameters:
+        - $ref: "#/components/parameters/ChannelHash"
+      responses:
+        200:
+          description: "Successfully retrieves the Channel data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelResponse'
+  
+  # Profile Routes
+  /profiles:
+    get:
+      summary: Retrieves information about the profiles available for the account.
+      tags:
+        - Profiles
+      responses:
+        200:
+          description: "Successfully retrieves the Profile data"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Creates a profile within the host account
+      tags:
+        - Profiles
+      requestBody:
+        $ref: "#/components/requestBodies/Profile"
+      responses:
+        200:
+          description: "Successfully created the Profile"
+          content:
+            application/json:
+              schema:
+                type: object
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+        403:
+          $ref: "#/components/responses/403"
+  /profiles/{id}:
+    get:
+      summary: Retrieves information about a specific Profile
+      tags:
+        - Profiles
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the Profile data"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ProfileResponse'
+  
+  # User Routes
+  /users:
+    post:
+      summary: "Creates a new User resource within the account."
+      tags:
+        - Users
+      requestBody:
+        $ref: "#/components/requestBodies/User"
+      responses:
+        200:
+          description: "Successfully created the User resource."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+  /users/{id}:
+    get:
+      summary: Retrieves information about a specific Profile
+      tags:
+        - Users
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully retrieves the User data"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/UserResponse'
+  
+  # Screen Routes
+  /profiles/{profile_id}/screens:
+    get:
+      summary: Retrieves information about the screens available for the account.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Screens
+      responses:
+        200:
+          description: "Successfully retrieves the Screen data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Creates a Screen within the parent profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/Screen"
+      tags:
+        - Screens
+      responses:
+        200:
+          description: "Successfully created the Screen"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+  /screens/{id}:
+    get:
+      summary: Retrieves information about a specific Screen
+      tags:
+        - Screens
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the Screen data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenResponse'
+  
+  # Schedules Routes
+  /screens/{screen_id}/schedules:
+    get:
+      summary: Retrieves the scheduled Timetables for the given Screen.
+      parameters:
+        - $ref: "#/components/parameters/ScreenId"
+      tags:
+        - Schedules
+      responses:
+        200:
+          description: "Successfully retrieves the Schedules for the Screen."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Schedules a Timetable to play onto a Screen at a specific time.
+      parameters:
+        - $ref: "#/components/parameters/ScreenId"
+      requestBody:
+        $ref: "#/components/requestBodies/Schedule"
+      tags:
+        - Schedules
+      responses:
+        200:
+          description: "Successfully created the Schedule."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+  /schedules/{id}:
+    get:
+      summary: Retrieves information about a specific Schedule.
+      tags:
+        - Schedules
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the information for the Schedule"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+
+  # Timetable Routes
+  /profiles/{profile_id}/timetables:
+    get:
+      summary: Retrieves information about the timetables present within the account.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Timetables
+      responses:
+        200:
+          description: "Successfully retrieves the Screen data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimetableResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Creates a Timetable within the parent profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/Timetable"
+      tags:
+        - Timetables
+      responses:
+        200:
+          description: "Successfully created the Timetable"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimetableResponse'
+  /timetables/{id}:
+    get:
+      summary: Retrieves information about a specific Timetable record
+      tags:
+        - Timetables
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the Screen data"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimetableResponse'
+  
+  # Loop Routes
+  /profiles/{profile_id}/loops:
+    get:
+      summary: Retrieves information about the loops present within the account.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Loops
+      responses:
+        200:
+          description: "Successfully retrieves the Loop record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Creates a Loop within the parent profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/Loop"
+      tags:
+        - Loops
+      responses:
+        200:
+          description: "Successfully created the Loops"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopResponse'
+  /loops/{id}:
+    get:
+      summary: Retrieves information about a specific Loop record
+      tags:
+        - Loops
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the Loop record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopResponse'
+  
+  # Timetable Blocks Routes
+  /timetables/{timetable_id}/timetable_blocks:
+    get:
+      summary: Retrieves information about the scheduled loops for a timetable.
+      parameters:
+        - $ref: "#/components/parameters/TimetableId"
+      tags:
+        - Timetable Blocks
+      responses:
+        200:
+          description: "Successfully retrieves the scheduled Loop(s) for the Timetable."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimetableBlockResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Schedules a Loop to be shown at a specific time within the Timetable
+      parameters:
+        - $ref: "#/components/parameters/TimetableId"
+      requestBody:
+        $ref: "#/components/requestBodies/TimetableBlock"
+      tags:
+        - Timetable Blocks
+      responses:
+        200:
+          description: "Successfully created the Timetable Block within the Timetable."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimetableBlockResponse'
+        401:
+          $ref: "#/components/responses/401"
+  /timetable_blocks/{id}:
+    get:
+      summary: Retrieves information about a specific TimetableBlock record
+      tags:
+        - Timetable Blocks
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully retrieves the Timetable Block record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimetableBlockResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+          
+  # Loop Item Routes
+  /loops/{loop_id}/loop_items:
+    get:
+      summary: Retrieves information about the items that are set for a Loop.
+      parameters:
+        - $ref: "#/components/parameters/LoopId"
+      tags:
+        - Loop Items
+      responses:
+        200:
+          description: "Successfully retrieves the scheduled Loop Item(s) for the Loop."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Adds a Loop Item to the parent Loop
+      parameters:
+        - $ref: "#/components/parameters/LoopId"
+      requestBody:
+        $ref: "#/components/requestBodies/LoopItem"
+      tags:
+        - Loop Items
+      responses:
+        200:
+          description: "Successfully created the Loop Item within the Loop."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemResponse'
+        401:
+          $ref: "#/components/responses/401"
+  /loops/{loop_id}/loop_items/order:
+    put:
+      summary: Sets the order of the Loop Item(s) in the Loop
+      parameters:
+        - $ref: "#/components/parameters/LoopId"
+      requestBody:
+        $ref: "#/components/requestBodies/LoopOrder"
+      tags:
+        - Loop Items
+      responses:
+        200:
+          description: "Successfully set the new order of position for the Loop."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemResponse'
+        401:
+          $ref: "#/components/responses/401"
+  /loop_items/{id}:
+    get:
+      summary: Retrieves information about a specific LoopItem record
+      tags:
+        - Loop Items
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully retrieves the Loop Item record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    delete:
+      summary: Deletes this Loop Item record
+      tags:
+        - Loop Items
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully deleted the Loop Item record"
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+  
+  # Assets/Image Routes
+  /profiles/{profile_id}/assets/images:
+    get:
+      summary: Returns the image assets available for the Profile.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Image Assets
+      responses:
+        200:
+          description: "Successfully retrieves the assets for the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Uploads an asset into the Profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/ImageAsset"
+      tags:
+        - Image Assets
+      responses:
+        200:
+          description: "Successfully created the Image Asset within the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+  /assets/images/{id}:
+    get:
+      summary: Retrieves information about a specific Image Asset record
+      tags:
+        - Image Assets
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully retrieves the Image Asset record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+  
+  # Assets/Video Routes
+  /profiles/{profile_id}/assets/videos:
+    get:
+      summary: Returns the video assets available for the Profile.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Video Assets
+      responses:
+        200:
+          description: "Successfully retrieves the video assets for the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Uploads a video asset into the Profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/VideoAsset"
+      tags:
+        - Video Assets
+      responses:
+        200:
+          description: "Successfully created the Video Asset within the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+  /assets/videos/{id}:
+    get:
+      summary: Retrieves information about a specific Video Asset record
+      tags:
+        - Video Assets
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully retrieves the Video Asset record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+          
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    401:
+      description: "Failed to authenticate with the provided API key."
+      content:
+        application/json:
+          schema:
+            type: string
+            example: "HTTP Token: Access denied."
+    403:
+      description: "The API key provided does not have access to the required operation."
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+              example: "The API key provided does not allow read/write access."
+    404:
+      description: "The resource has not been found on our server."
+
+  parameters:
+    IntegerId:
+      in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: "numerical ID of the record being accessed. e.g. 14335."
+    CachedSlug:
+      in: path
+      name: id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the record being accessed. e.g. summer-timetable-3."
+    ProfileId:
+      in: path
+      name: profile_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Profile being accessed, e.g. warehouse-office-1."
+    TimetableId:
+      in: path
+      name: timetable_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Timetable being accessed, e.g. summer-sales-timetable."
+    ScreenId:
+      in: path
+      name: screen_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Screen being accessed, e.g. shop-window."
+    ChannelHash:
+      in: path
+      name: id
+      schema:
+        type: string
+      required: true
+      description: "Hexadecimal hash ID of the Channel, e.g. 8dce31479ca371d9c4051badbaacbaad"
+    LoopId:
+      in: path
+      name: loop_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Loop being accessed, e.g. lunchtime-offers."
+
+  requestBodies:
+    ImageAsset:
+      description: "JSON representation of an Image Asset"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              image:
+                $ref: '#/components/schemas/ImageAssetRequest'
+    VideoAsset:
+      description: "JSON representation of an Video Asset"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              video:
+                $ref: '#/components/schemas/VideoAssetRequest'
+    Loop:
+      description: "JSON representation of a Loop object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loop:
+                $ref: "#/components/schemas/LoopRequest"
+    LoopOrder:
+      description: "Array of Loop Item IDs in order of position."
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loop_item:
+                properties:
+                  order:
+                    type: array
+                    example: [9123, 1044, 1045, 1046, 1043]
+    LoopItem:
+      description: "JSON representation of a LoopItem object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loop_item:
+                $ref: "#/components/schemas/LoopItemRequest"
+    Profile:
+      description: "JSON representation of a Profile object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              profile:
+                $ref: "#/components/schemas/ProfileRequest"
+    Timetable:
+      description: "JSON representation of a Timetable object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timetable:
+                $ref: "#/components/schemas/TimetableRequest"
+    TimetableBlock:
+      description: "JSON representation of a TimetableBlock object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              timetable_block:
+                $ref: "#/components/schemas/TimetableBlockRequest"
+    User:
+      description: "JSON representation of a User object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/UserRequest"
+    Screen:
+      description: "JSON representation of a User object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              screen:
+                $ref: "#/components/schemas/ScreenRequest"
+    Schedule:
+      description: "JSON representation of a Schedule object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              schedule:
+                $ref: "#/components/schemas/ScheduleRequest"
+
+  schemas:
+    ChannelResponse:
+      type: object
+      required:
+        - name
+      properties:
+        channel:
+          type: object
+          properties:
+            id:
+              type: string
+              example: "8dce31479ca371d9c4051badbaacbaad"
+            name:
+              type: string
+              example: "Our Twitter Posts & Retweets"
+        published_content:
+          type: object
+          properties:
+            page:
+              type: integer
+              example: 3
+            entries:
+              type: array
+              items:
+                properties:
+                  id_str:
+                    type: string
+                    example: "991681714899636224"
+                  source:
+                    type: string
+                    example: "twitter"
+                  name:
+                    type: string
+                    example: "NowSignage"
+                  username:
+                    type: string
+                    example: "nowsignage"
+                  bio:
+                    type: string
+                    example: "Cloud based digital signage software that enables retail brands to control content broadcast to screens located across any store at the click of a button!"
+                  avatar_url:
+                    type: string
+                    example: "https://pbs.twimg.com/profile_images/722450950057660416/FWhB4cS3.jpg"
+                  title:
+                    type: string
+                    example: "Great day for Digital Signage in Manchester"
+                  message:
+                    type: string
+                    example: "Our team is loving the conversation today at #RDSE2018!\n\nCome over for a chat about how you can engage your audience in retail through #DigitalSignage, without blowing your entire budget. https://t.co/6rblEz9b2h"
+                  small_image_url:
+                    type: string
+                    example: "https://pbs.twimg.com/media/DcMpKQcX4AAdraF.jpg"
+                  med_image_url:
+                    type: string
+                    example: "https://pbs.twimg.com/media/DcMpKQcX4AAdraF.jpg"
+                  large_image_url:
+                    type: string
+                    example: "https://pbs.twimg.com/media/DcMpKQcX4AAdraF.jpg"
+                  video_url:
+                    type: string
+                    example: "https://video.twimg.com/tweet_video/Djag43LX4AA43jgCG.mp4"
+                  content_url:
+                    type: string
+                    example: "https://www.theguardian.com/business/live/2018/jul/31/markets-await-latest-eurozone-growth-figures-business-live"
+                    description: "The URL shared by the post"
+                  permalink_url:
+                    type: string
+                    example: "https://twitter.com/nowsignage/status/991681714899636224"
+                    description: Link to the source post on the social network or RSS link.
+                  published_at:
+                    type: string
+                    example: "2018-05-02T14:12:00.000Z"
+                    description: "An ISO8601 date string describing when the content was originally posted to the social media network"
+                  created_at:
+                    type: string
+                    example: "2018-05-02T14:12:00.000Z"
+                    description: "An ISO8601 date string containing the date the entry was published in NowSignage"
+    ProfileRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Manhattan Store"
+    ProfileResponse:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          example: "manhattan-store-1"
+        name:
+          type: string
+          example: "Manhattan Store"
+        created_at:
+          type: string
+          example: "2016-11-02T11:49:06.000Z"
+    
+    UserRequest:
+      type: object
+      required:
+        - name
+        - email
+        - company
+        - password
+        - accepted_terms
+      properties:
+        name:
+          type: string
+          example: "Samuel Vimes"
+        email:
+          type: string
+          example: "webmaster@nowsignage.com"
+        password:
+          type: string
+          format: password
+          example: "hunter2"
+        company:
+          type: string
+          example: "NowSignage Ltd."
+        phone:
+          type: string
+          example: "+441614961505"
+        accepted_terms:
+          type: boolean
+          description: "The user accepts the NowSignage Terms & Conditions."
+        accepted_marketing_emails:
+          type: boolean
+          description: "Whether the user opts-in for NowSignage marketing material."
+    UserResponse:
+      type: object
+      required:
+        - name
+        - email
+        - company
+        - password
+        - accepted_terms
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Samuel Vimes"
+        email:
+          type: string
+          example: "webmaster@nowsignage.com"
+        company:
+          type: string
+          example: "NowSignage Ltd."
+        accepted_terms:
+          type: boolean
+          description: "The user accepts the NowSignage Terms & Conditions."
+        accepted_marketing_emails:
+          type: boolean
+          description: "Whether the user opts-in for NowSignage marketing material."
+        phone:
+          type: string
+          example: "+441614961505"
+    
+    ScreenRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Greenwich Village Menswear"
+    ScreenResponse:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          example: "greenwich-village-menswear"
+        name:
+          type: string
+          example: "Greenwich Village Menswear"
+        location:
+          type: string
+          example: "Manhattan"
+        firetv_code:
+          type: string
+          example: "59802"
+        last_connected_at:
+          type: string
+          format: date-time
+          example: "2018-07-17T08:49:42.000Z"
+          
+    ScheduleRequest:
+      type: object
+      required:
+        - timetable_id
+        - start_date
+      properties:
+        timetable_id:
+          type: string
+          example: "summer-timetable-1"
+        start_date:
+          type: string
+          example: "2018-07-01 00:00:00"
+          description: "An ISO8601 date and time to start this Timetable from."
+        end_date:
+          type: string
+          example: "2018-07-29 23:59:59"
+          description: "An optional ISO8601 date and time to end this Timetable at."
+    ScheduleResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 1240
+          description: "The ID for the newly-created Schedule."
+        timetable_id:
+          type: string
+          example: "summer-timetable-1"
+        start_date:
+          type: string
+          example: "2018-07-01 00:00:00"
+          description: "An ISO8601 date and time to start this Timetable from."
+        end_date:
+          type: string
+          example: "2018-07-29 23:59:59"
+          description: "An optional ISO8601 date and time to end this Timetable at."
+          
+    TimetableRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Summer Timetable"
+    TimetableResponse:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          example: "summer-timetable"
+        name:
+          type: string
+          example: "Summer Timetable"
+    
+    TimetableBlockRequest:
+      type: object
+      required:
+        - loop_id
+        - start
+        - end
+      properties:
+        loop_id:
+          type: integer
+          example: 209
+        start:
+          $ref: "#/components/schemas/TimetableBlockTime"
+        end: 
+          $ref: "#/components/schemas/TimetableBlockTime"
+        
+    TimetableBlockResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 2015
+        loop_id:
+          type: string
+          example: "beach-products-loop"
+        start:
+          $ref: "#/components/schemas/TimetableBlockTime"
+        end:
+          $ref: "#/components/schemas/TimetableBlockTime"
+            
+    LoopRequest:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          example: "Friday Sales"
+    LoopResponse:
+      type: object
+      required:
+        - name
+      properties:
+        id:
+          type: string
+          example: "friday-sales-2"
+        name:
+          type: string
+          example: "Friday Sales"
+          
+    LoopItemRequest:
+      type: object
+      required:
+        - name
+        - duration
+        - asset
+      properties:
+        name:
+          type: string
+          example: "Two-for-One Deal on Shoes"
+        duration:
+          type: integer
+          example: 15
+          description: "Length that the item will be shown on-screen for."
+        external_url:
+          type: string
+          example: "https://nowsignage.com/api-docs"
+          description: "A URL to load on the screen, as is, without NS processing."
+        start_date:
+          type: string
+          example: "2019-03-01"
+          description: "Optional start date to allow this item to be shown from"
+        end_date:
+          type: string
+          example: "2019-12-24"
+          description: "Optional end date, on which, the item will be removed from the loop"
+        asset:
+          type: object
+          required:
+            - type
+          properties:
+            id:
+              type: integer
+              example: 1529
+              description: "ID of the Asset being placed into the loop, if type is `image` or `video`."
+            type:
+              type: string
+              enum: ["image", "video", "web", "youtube"]
+              description: "Type of Asset being referenced"
+              
+    LoopItemResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Two-for-One Deal on Shoes"
+        duration:
+          type: string
+          example: 15
+        start_date:
+          type: string
+          example: "2019-03-01T00:00:00.000Z"
+        end_date:
+          type: string
+          example: "2019-12-24T00:00:00.000Z"
+        position:
+          type: integer
+          example: 0
+          description: "Zero-based index within the Loop of this Loop Item."
+          
+    ImageAssetRequest:
+      type: object
+      required:
+        - name
+        - image
+      properties:
+        name:
+          type: string
+          example: "Burger Promo Ad"
+        url:
+          type: string
+          format: binary
+          example: "https://s3.nowsignage.com/media/2017/01/01/burger-ad.png"
+          description: "HTTP URL to be uploaded into the NowSignage system."
+    ImageAssetResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Burger Promo Ad"
+        image_name:
+          type: string
+          example: "burger-promo-image.png"
+        checksum:
+          type: string
+          example: "bac9e5f7af5deb7ca5ccbe4f919ef7918b8f65f33adfcbda68fb6f6694f424c1"
+          description: "Our hash of the contents of the original file uploaded."
+        orientation:
+          type: string
+          example: "portrait"
+          description: "The orientation of the image that was uploaded."
+          
+    VideoAssetRequest:
+      type: object
+      required:
+        - name
+        - video
+      properties:
+        name:
+          type: string
+          example: "A/W 2018 Collection"
+        url:
+          type: string
+          format: binary
+          example: "https://s3.nowsignage.com/media/2017/01/01/new-releases.mp4"
+          description: "HTTP Video URL to be uploaded into the NowSignage system."
+    VideoAssetResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Company Values Video 1"
+        video_name:
+          type: string
+          example: "nowsignage-company-values-video.webm"
+        duration:
+          type: integer
+          example: 180
+          description: "The length of the video uploaded."
+        checksum:
+          type: string
+          example: "bac9e5f7af5deb7ca5ccbe4f919ef7918b8f65f33adfcbda68fb6f6694f424c1"
+          description: "Our hash of the contents of the original file uploaded."
+        orientation:
+          type: string
+          example: "landscape"
+          description: "The orientation of the video that was uploaded."
+          
+    TimetableBlockTime:
+      type: object
+      properties:
+        day:
+          type: integer
+          description: "Represents the day of the week to start this block, zero corresponds to Monday."
+          example: 3
+        time:
+          type: string
+          example: "01:30:00"
+          description: "ISO8601-formatted time string (%t) for the block."
+          
+security:
+  - bearerAuth: []
