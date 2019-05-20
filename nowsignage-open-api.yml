@@ -2,11 +2,11 @@ openapi: 3.0.0
 
 servers:
   - url: 'https://api.nowsignage.com/v1'
-  
+
 info:
   description:
     The NowSignage platform API.
-    
+
     For a quick overview of our API, please <a href="https://www.nowsignage.com/api-docs" target="_blank">check out our API Guide</a>.
   version: "1.0.0-oas3"
   title: NowSignage API
@@ -41,14 +41,14 @@ tags:
     description: Operations for the management of Image Assets within the parent Profile.
   - name: Video Assets
     description: Operations for the management of Video Assets within the parent Profile.
-  
+
 paths:
   /:
     get:
       summary: Root url for the API
       tags:
         - Base
-      responses: 
+      responses:
         200:
           description: "the API is operating successfully, and the token provided was authenticated."
         401:
@@ -57,7 +57,7 @@ paths:
           $ref: "#/components/responses/403"
         404:
           $ref: "#/components/responses/404"
-  
+
   # Channel Routes
   /profiles/{profile_id}/channels:
     get:
@@ -91,7 +91,7 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ChannelResponse'
-  
+
   # Profile Routes
   /profiles:
     get:
@@ -144,7 +144,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/ProfileResponse'
-  
+
   # User Routes
   /users:
     post:
@@ -180,7 +180,7 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UserResponse'
-  
+
   # Screen Routes
   /profiles/{profile_id}/screens:
     get:
@@ -229,7 +229,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ScreenResponse'
-  
+    put:
+      summary: Updates screen information
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      requestBody:
+        $ref: "#/components/requestBodies/ScreenUpdate"
+      tags:
+        - Screens
+      responses:
+        200:
+          description: "Successfully created the Screen"
+        400:
+          $ref: "#/components/responses/400"
+    delete:
+      summary: Deletes this Screen record
+      tags:
+        - Screens
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully deleted the Screen record"
+        400:
+          $ref: "#/components/responses/400"
+
+
   # Schedules Routes
   /screens/{screen_id}/schedules:
     get:
@@ -270,7 +295,7 @@ paths:
       tags:
         - Schedules
       parameters:
-        - $ref: "#/components/parameters/CachedSlug"
+        - $ref: "#/components/parameters/IntegerId"
       responses:
         200:
           description: "Successfully retrieves the information for the Schedule"
@@ -282,6 +307,17 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
+    delete:
+      summary: Deletes this Schedule record
+      tags:
+        - Schedules
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      responses:
+        200:
+          description: "Successfully deleted the Schedule record"
+        400:
+          $ref: "#/components/responses/400"
 
   # Timetable Routes
   /profiles/{profile_id}/timetables:
@@ -331,13 +367,42 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/TimetableResponse'
-  
+    delete:
+      summary: Deletes this Timetable record
+      tags:
+        - Timetables
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully deleted the Timetable record"
+        400:
+          $ref: "#/components/responses/400"
+
   # Loop Routes
   /profiles/{profile_id}/loops:
     get:
       summary: Retrieves information about the loops present within the account.
       parameters:
-        - $ref: "#/components/parameters/ProfileId"
+        - in: path
+          name: profile_id
+          schema:
+            type: string
+          required: true
+          description: "human readable ID of the Profile being accessed, e.g. warehouse-office-1."
+        - in: query
+          name: scope
+          description: Filters entries by provided constraints
+          schema:
+            type: object
+            properties:
+              external_url:
+                type: string
+                example: "http://example.com"
+              item_name:
+                type: string
+                example: "Friday Sales"
+          style: deepObject
       tags:
         - Loops
       responses:
@@ -380,7 +445,45 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LoopResponse'
-  
+    put:
+      summary: Updates loop information
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      requestBody:
+        $ref: "#/components/requestBodies/LoopUpdate"
+      tags:
+        - Loops
+      responses:
+        200:
+          description: "Successfully updated the Loop"
+        400:
+          $ref: "#/components/responses/400"
+    delete:
+      summary: Deletes this Loop record
+      tags:
+        - Loops
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully deleted the Loop record"
+        400:
+          $ref: "#/components/responses/400"
+  /loops/{id}/count:
+    get:
+      summary: Retrieves the number of assets of a specific Loop record
+      tags:
+        - Loops
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the Loop assets count"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopCountResponse'
+
   # Timetable Blocks Routes
   /timetables/{timetable_id}/timetable_blocks:
     get:
@@ -435,7 +538,7 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
-          
+
   # Loop Item Routes
   /loops/{loop_id}/loop_items:
     get:
@@ -508,6 +611,19 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
+    put:
+      summary: Adds a Loop Item to the parent Loop
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      requestBody:
+        $ref: "#/components/requestBodies/LoopItemUpdate"
+      tags:
+        - Loop Items
+      responses:
+        200:
+          description: "Successfully updated the Loop Item"
+        400:
+          $ref: "#/components/responses/400"
     delete:
       summary: Deletes this Loop Item record
       tags:
@@ -521,7 +637,7 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
-  
+
   # Assets/Image Routes
   /profiles/{profile_id}/assets/images:
     get:
@@ -576,7 +692,7 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
-  
+
   # Assets/Video Routes
   /profiles/{profile_id}/assets/videos:
     get:
@@ -631,7 +747,7 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
-          
+
 components:
   securitySchemes:
     bearerAuth:
@@ -639,6 +755,12 @@ components:
       scheme: bearer
 
   responses:
+    400:
+      description: "Request was unsuccessful"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
     401:
       description: "Failed to authenticate with the provided API key."
       content:
@@ -740,6 +862,16 @@ components:
             properties:
               loop:
                 $ref: "#/components/schemas/LoopRequest"
+    LoopUpdate:
+      description: "JSON representation of a Loop update object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loop:
+                $ref: "#/components/schemas/LoopUpdateRequest"
     LoopOrder:
       description: "Array of Loop Item IDs in order of position."
       required: true
@@ -763,6 +895,16 @@ components:
             properties:
               loop_item:
                 $ref: "#/components/schemas/LoopItemRequest"
+    LoopItemUpdate:
+      description: "JSON representation of a LoopItem update object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loop_item:
+                $ref: "#/components/schemas/LoopItemUpdateRequest"
     Profile:
       description: "JSON representation of a Profile object"
       required: true
@@ -804,7 +946,7 @@ components:
               user:
                 $ref: "#/components/schemas/UserRequest"
     Screen:
-      description: "JSON representation of a User object"
+      description: "JSON representation of a Screen object"
       required: true
       content:
         application/json:
@@ -813,6 +955,16 @@ components:
             properties:
               screen:
                 $ref: "#/components/schemas/ScreenRequest"
+    ScreenUpdate:
+      description: "JSON representation of a Screen update object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              screen:
+                $ref: "#/components/schemas/ScreenUpdateRequest"
     Schedule:
       description: "JSON representation of a Schedule object"
       required: true
@@ -923,7 +1075,7 @@ components:
         created_at:
           type: string
           example: "2016-11-02T11:49:06.000Z"
-    
+
     UserRequest:
       type: object
       required:
@@ -955,6 +1107,14 @@ components:
         accepted_marketing_emails:
           type: boolean
           description: "Whether the user opts-in for NowSignage marketing material."
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+            enum: ["An error has occurred"]
     UserResponse:
       type: object
       required:
@@ -985,15 +1145,28 @@ components:
         phone:
           type: string
           example: "+441614961505"
-    
+
     ScreenRequest:
       type: object
       required:
         - name
+        - location
       properties:
         name:
           type: string
           example: "Greenwich Village Menswear"
+        location:
+          type: string
+          example: Manhattan
+    ScreenUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Greenwich Village Menswear"
+        location:
+          type: string
+          example: Manhattan
     ScreenResponse:
       type: object
       required:
@@ -1015,7 +1188,7 @@ components:
           type: string
           format: date-time
           example: "2018-07-17T08:49:42.000Z"
-          
+
     ScheduleRequest:
       type: object
       required:
@@ -1051,7 +1224,7 @@ components:
           type: string
           example: "2018-07-29 23:59:59"
           description: "An optional ISO8601 date and time to end this Timetable at."
-          
+
     TimetableRequest:
       type: object
       required:
@@ -1071,7 +1244,7 @@ components:
         name:
           type: string
           example: "Summer Timetable"
-    
+
     TimetableBlockRequest:
       type: object
       required:
@@ -1084,9 +1257,9 @@ components:
           example: 209
         start:
           $ref: "#/components/schemas/TimetableBlockTime"
-        end: 
+        end:
           $ref: "#/components/schemas/TimetableBlockTime"
-        
+
     TimetableBlockResponse:
       type: object
       properties:
@@ -1100,11 +1273,17 @@ components:
           $ref: "#/components/schemas/TimetableBlockTime"
         end:
           $ref: "#/components/schemas/TimetableBlockTime"
-            
+
     LoopRequest:
       type: object
       required:
         - name
+      properties:
+        name:
+          type: string
+          example: "Friday Sales"
+    LoopUpdateRequest:
+      type: object
       properties:
         name:
           type: string
@@ -1120,7 +1299,14 @@ components:
         name:
           type: string
           example: "Friday Sales"
-          
+    LoopCountResponse:
+      type: object
+      required:
+        - count
+      properties:
+        count:
+          type: integer
+          example: 5
     LoopItemRequest:
       type: object
       required:
@@ -1160,7 +1346,24 @@ components:
               type: string
               enum: ["image", "video", "web", "youtube"]
               description: "Type of Asset being referenced"
-              
+    LoopItemUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Two-for-One Deal on Shoes"
+        duration:
+          type: integer
+          example: 15
+          description: "Length that the item will be shown on-screen for."
+        start_date:
+          type: string
+          example: "2019-03-01"
+          description: "Optional start date to allow this item to be shown from"
+        end_date:
+          type: string
+          example: "2019-12-24"
+          description: "Optional end date, on which, the item will be removed from the loop"
     LoopItemResponse:
       type: object
       properties:
@@ -1183,7 +1386,7 @@ components:
           type: integer
           example: 0
           description: "Zero-based index within the Loop of this Loop Item."
-          
+
     ImageAssetRequest:
       type: object
       required:
@@ -1218,7 +1421,7 @@ components:
           type: string
           example: "portrait"
           description: "The orientation of the image that was uploaded."
-          
+
     VideoAssetRequest:
       type: object
       required:
@@ -1257,7 +1460,7 @@ components:
           type: string
           example: "landscape"
           description: "The orientation of the video that was uploaded."
-          
+
     TimetableBlockTime:
       type: object
       properties:
@@ -1269,6 +1472,6 @@ components:
           type: string
           example: "01:30:00"
           description: "ISO8601-formatted time string (%t) for the block."
-          
+
 security:
   - bearerAuth: []
