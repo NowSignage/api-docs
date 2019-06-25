@@ -41,6 +41,8 @@ tags:
     description: Operations for the management of Image Assets within the parent Profile.
   - name: Video Assets
     description: Operations for the management of Video Assets within the parent Profile.
+  - name: Visual ID Web Animations
+    description: Operations for registering a Visual ID Web Animation with NowSignage.
 
 paths:
   /:
@@ -748,6 +750,85 @@ paths:
         404:
           $ref: "#/components/responses/404"
 
+ # Visual ID Animations routes
+  /profiles/{profile_id}/visual_id_animations:
+    get:
+      summary: Retrieves the Visual ID Web Animations available for the Profile.
+      tags:
+        - Visual ID Web Animations
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      responses:
+        200:
+          description: "Successfully retrieves the web animations for the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisualIdAnimationResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Adds a Visual ID Web Animation to the specified Profile.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/VisualIdAnimation"
+      tags:
+        - Visual ID Web Animations
+      responses:
+        200:
+          description: "Successfully created the Loop Item within the Loop."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemResponse'
+        401:
+          $ref: "#/components/responses/401"
+  /visual_id_animations/{id}:
+    get:
+      summary: Retrieves information about a specific Visual ID Web Animations record
+      tags:
+        - Visual ID Web Animations
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully retrieves the Visual ID Web Animation record"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisualIdAnimationResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    put:
+      summary: Updates the specified Visual ID Web Animation
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      requestBody:
+        $ref: "#/components/requestBodies/VisualIdAnimationUpdate"
+      tags:
+        - Visual ID Web Animations
+      responses:
+        200:
+          description: "Successfully updated the Visual ID Web Animation"
+        400:
+          $ref: "#/components/responses/400"
+    delete:
+      summary: Deletes this Visual ID Web Animation record
+      tags:
+        - Visual ID Web Animations
+      parameters:
+        - $ref: "#/components/parameters/CachedSlug"
+      responses:
+        200:
+          description: "Successfully deleted the Visual ID Web Animation record"
+        400:
+          $ref: "#/components/responses/400"
+
 components:
   securitySchemes:
     bearerAuth:
@@ -975,6 +1056,27 @@ components:
             properties:
               schedule:
                 $ref: "#/components/schemas/ScheduleRequest"
+
+    VisualIdAnimation:
+      description: "JSON representation of a Visual ID Web Animation object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              visual_id_animation:
+                $ref: "#/components/schemas/VisualIdAnimationRequest"
+    VisualIdAnimationUpdate:
+      description: "JSON representation of a Visual ID Web Animation object"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              visual_id_animation:
+                $ref: "#/components/schemas/VisualIdAnimationRequest"
 
   schemas:
     ChannelResponse:
@@ -1460,6 +1562,46 @@ components:
           type: string
           example: "landscape"
           description: "The orientation of the video that was uploaded."
+
+    VisualIdAnimationRequest:
+      type: object
+      required:
+        - name
+        - payload_url
+      properties:
+        name:
+          type: string
+          example: "Bakery Morning Advert Animation"
+        payload_url:
+          type: string
+          example: "https://animation-server.s3.aws.com/my-animation.zip"
+          description: "URL of the ZIP payload of a Visual ID Web Animation"
+
+    VisualIdAnimationResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Bakery Morning Advert Animation"
+        payload_url:
+          type: string
+          example: "https://animation-server.s3.aws.com/my-animation.zip"
+          description: "URL of the ZIP payload of a Visual ID Web Animation"
+        checksum:
+          type: string
+          example: "bac9e5f7af5deb7ca5ccbe4f919ef7918b8f65f33adfcbda68fb6f6694f424c1"
+          description: "Our hash of the contents of the original file uploaded."
+        created_at:
+          type: string
+          example: "2018-05-02T14:12:00.000Z"
+          description: "An ISO8601 date string containing the date the record was created in NowSignage"
+        updated_at:
+          type: string
+          example: "2018-05-02T14:12:00.000Z"
+          description: "An ISO8601 date string containing the date the record was last modified in NowSignage"
 
     TimetableBlockTime:
       type: object
