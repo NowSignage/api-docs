@@ -8,7 +8,7 @@ info:
   version: "1.0.0-oas3"
   title: NowSignage API
   contact:
-    name: the NowSignage Engineering Team
+    name: the NowSignage Engineering Team *testing*
     email: info@nowsignage.com
 
 tags:
