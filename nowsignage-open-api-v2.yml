@@ -1,8 +1,5 @@
 openapi: 3.0.0
 
-servers:
-  - url: 'https://api.nowsignage.com/v1'
-
 info:
   description:
     The NowSignage platform API.
