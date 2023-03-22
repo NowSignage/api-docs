@@ -21,10 +21,10 @@ tags:
     description: Operations available for NowSignage Layouts
   - name: Layout Sections
     description: Operations available for NowSignage Layout Sections
-  - name: Timeslots
-    description: Operations available for NowSignage Schedule Timeslots
   - name: Schedules
     description: Operations available for NowSignage Schedules
+  - name: Timeslots
+    description: Operations available for NowSignage Schedule Timeslots
 
 paths:
   # Playlist Routes
