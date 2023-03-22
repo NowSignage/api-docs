@@ -1,0 +1,808 @@
+openapi: 3.0.0
+
+servers:
+  - url: 'https://api.nowsignage.com/v2'
+
+info:
+  description:
+    The NowSignage platform API.
+
+    For a quick overview of our API, please <a href="https://www.nowsignage.com/api-docs" target="_blank">check out our API Guide</a>.
+  version: "1.0.0-oas3"
+  title: NowSignage API
+  contact:
+    name: the NowSignage Engineering Team
+    email: info@nowsignage.com
+
+tags:
+  - name: Playlists
+    description: Operations available for NowSignage Playlists
+  - name: Layouts
+    description: Operations available for NowSignage Layouts
+  - name: Layout Sections
+    description: Operations available for NowSignage Layout Sections
+  - name: Timeslots
+    description: Operations available for NowSignage Schedule Timeslots
+  - name: Schedules
+    description: Operations available for NowSignage Schedules
+
+paths:
+  # Playlist Routes
+  /profiles/{profile_id}/loops:
+    get:
+      summary: Retrieves a list of playlists available for this account
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Playlists
+      responses:
+        200:
+          description: "Successfully retrieves a list of playlists"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+  /loops/{id}/loop_items:
+    get:
+      summary: Retrieves a list of playlist items
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Playlists
+      responses:
+        200:
+          description: "Successfully retrieves a list of the playlist items"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+          
+  # Layout Routes
+  /profiles/{profile_id}/layouts:
+    get:
+      summary: Retrieves a list of layouts available for this account
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Layouts
+      responses:
+        200:
+          description: "Successfully retrieves a list of layouts"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Creates a new layout for this account
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Layouts
+      requestBody:
+        $ref: "#/components/requestBodies/LayoutCreate"
+      responses:
+        200:
+          description: "Successfully created the a layout"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutCreateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+  /layouts/{id}:
+    get:
+      summary: Retrieves a specific layout available for this account
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Layouts
+      responses:
+        200:
+          description: "Successfully retrieves a specific layout"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutShowResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    put:
+      summary: Update an existing layout for this account, create/update layout sections
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Layouts
+      requestBody:
+        $ref: "#/components/requestBodies/LayoutUpdate"
+      responses:
+        200:
+          description: "Successfully updated the layout and layout sections"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutUpdateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    delete:
+      summary: Deletes an existing layout for this account
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Layouts
+      responses:
+        200:
+          description: "Successfully deleted the layout"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutDeleteResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+          
+  # Schedule Routes
+  /profiles/{profile_id}/programmes:
+    get:
+      summary: Retrieves a list of schedules available for this account
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Schedules
+      responses:
+        200:
+          description: "Successfully retrieves a list of schedules"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Creates a new schedule for this account
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Schedules
+      requestBody:
+        $ref: "#/components/requestBodies/ScheduleCreate"
+      responses:
+        200:
+          description: "Successfully created the a schedule"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutCreateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+  /programmes/{id}:
+    get:
+      summary: Retrieves a specific schedule available for this account
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Schedules
+      responses:
+        200:
+          description: "Successfully retrieves a specific schedule"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleShowResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    put:
+      summary: Update an existing schedule for this account, create/update schedule timeslots
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Schedules
+      requestBody:
+        $ref: "#/components/requestBodies/ScheduleUpdate"
+      responses:
+        200:
+          description: "Successfully updated the layout and layout sections"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleUpdateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    delete:
+      summary: Deletes an existing schedule for this account
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Schedules
+      responses:
+        200:
+          description: "Successfully deleted the schedule"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScheduleDeleteResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+          
+  # Layout Sections
+  /layouts/{id}/sections:
+    get:
+      summary: Retrieves a list of layout sections for a layout
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Layout Sections
+      responses:
+        200:
+          description: "Successfully retrieves a list of layout sections for a layout"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LayoutSectionIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+          
+  # Timeslots
+  /programmes/{id}/timeslots:
+    get:
+      summary: Retrieves a list of timeslots for a schedule
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Timeslots
+      responses:
+        200:
+          description: "Successfully retrieves a list of timeslots for a schedule"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeslotIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+
+  responses:
+    400:
+      description: "Request was unsuccessful"
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    401:
+      description: "Failed to authenticate with the provided API key."
+      content:
+        application/json:
+          schema:
+            type: string
+            example: "HTTP Token: Access denied."
+    403:
+      description: "The API key provided does not have access to the required operation."
+      content:
+        application/json:
+          schema:
+            type: array
+            items:
+              type: string
+              example: "The API key provided does not allow read/write access."
+    404:
+      description: "The resource has not been found on our server."
+
+  parameters:
+    IntegerId:
+      in: path
+      name: id
+      schema:
+        type: integer
+      required: true
+      description: "numerical ID of the record being accessed. e.g. 14335."
+    
+    CachedSlug:
+      in: path
+      name: id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the record being accessed. e.g. summer-timetable-3."
+    ProfileId:
+      in: path
+      name: profile_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Profile being accessed, e.g. warehouse-office-1"
+    
+    TimetableId:
+      in: path
+      name: timetable_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Timetable being accessed, e.g. summer-sales-timetable."
+    
+    ScreenId:
+      in: path
+      name: screen_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Screen being accessed, e.g. shop-window."
+    
+    LoopId:
+      in: path
+      name: loop_id
+      schema:
+        type: string
+      required: true
+      description: "human readable ID of the Loop being accessed, e.g. lunchtime-offers."
+
+  requestBodies:
+    LayoutCreate:
+      description: "JSON representation of a layout"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/LayoutCreateRequest"
+                
+    LayoutUpdate:
+      description: "JSON representation of a layout"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/LayoutUpdateRequest"
+                
+    LayoutDelete:
+      description: "JSON representation of a layout"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/LayoutUpdateRequest"
+                
+    ScheduleCreate:
+      description: "JSON representation of a schedule"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/ScheduleCreateRequest"
+                
+    ScheduleUpdate:
+      description: "JSON representation of a layout"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              user:
+                $ref: "#/components/schemas/ScheduleUpdateRequest"
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+            enum: ["An error has occurred"]
+          
+    LayoutIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: "1"
+              name:
+                type: string
+                example: "Layout #1"
+              cached_slug:
+                type: string
+                example: "layout-number-1"
+              section_ids:
+                type: array
+                items:
+                  example: [1,2,3]
+                
+    LayoutShowResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+            name:
+              type: string
+              example: "Layout #1"
+            cached_slug:
+              type: string
+              example: "layout-number-1"
+            section_ids:
+              type: array
+              items:
+                example: [1,2,3]
+              
+    LayoutCreateRequest:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "My New Layout"
+        sections_attributes:
+          type: array
+          items:
+            type: object
+          example:
+            - left: 0
+              top: 0
+              width: 50
+              height: 100
+              layer: 1
+              loop_id: 1
+            - left: 50
+              top: 0
+              width: 50
+              height: 100
+              layer: 1
+              loop_id: 2
+              
+    LayoutCreateResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "2"
+            name:
+              type: string
+              example: "My New Layout"
+            cached_slug:
+              type: string
+              example: "my-new-layout"
+            section_ids:
+              type: array
+              items:
+                example: [4,5]
+              
+    LayoutUpdateRequest:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "New Layout Name w/ 3 Sections"
+        sections_attributes:
+          type: array
+          items:
+            type: object
+          example:
+            - id: 4
+              left: 50
+              top: 0
+              width: 25
+              height: 100
+              layer: 1
+              loop_id: 2
+            - left: 75
+              top: 0
+              width: 25
+              height: 100
+              layer: 1
+              loop_id: 3
+  
+    LayoutUpdateResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+            name:
+              type: string
+              example: "New Layout Name w/ 3 Sections"
+            section_ids:
+              type: array
+              items:
+                example: [1,2,3]
+    
+    LayoutDeleteResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+              
+    LayoutSectionIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            - id: 1
+              left: 0
+              top: 0
+              width: 50
+              height: 100
+              layer: 1
+              loop_id: 1
+            - id: 2
+              left: 50
+              top: 0
+              width: 50
+              height: 100
+              layer: 1
+              loop_id: 2
+              
+    TimeslotIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            - id: 1
+              layout_id: 1
+              starts_at: 540
+              ends_at: 1020
+              monday: true
+              tuesday: true
+              wednesday: true
+              thursday: true
+              friday: true
+              saturday: false
+              sunday: false
+    
+    LoopIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: "1"
+              name:
+                type: string
+                example: "Playlist #1"
+              cached_slug:
+                type: string
+                example: "playlist-number-1"
+              loop_item_ids:
+                type: array
+                items:
+                  example: [1,2,3]
+          
+    LoopItemIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: "1"
+              name:
+                type: string
+                example: "Picture A.jpg"
+              duration:
+                type: integer
+                example: 15
+              position:
+                type: integer
+                example: 0
+              start_date:
+                type: string
+                example: "2023-01-01 09:00:00"
+              end_date:
+                type: string
+                example: "2023-01-01 17:00:00"
+
+    ScheduleIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+                example: "1"
+              name:
+                type: string
+                example: "Schedule #1"
+              cached_slug:
+                type: string
+                example: "schedule-number-1"
+              layout_ids:
+                type: array
+                items:
+                  example: [1]
+              timeslot_ids:
+                type: array
+                items:
+                  example: [1]
+              screens_count:
+                type: integer
+                example: 1
+                
+    ScheduleCreateRequest:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "My New Schedule"
+        timeslots_attributes:
+          type: array
+          items:
+            type: object
+          example:
+          - layout_id: 1
+            starts_at: 540 // Expressed as minutes, e.g. 9am -> (9 * 60)
+            ends_at: 1020 // Expressed as minutes, e.g. 5pm -> (17 * 60)
+            monday: true
+            tuesday: true
+            wednesday: true
+            thursday: true
+            friday: true
+            saturday: false
+            sunday: false
+            
+    ScheduleUpdateRequest:
+      type: object
+      required:
+        - name
+        - email
+      properties:
+        name:
+          type: string
+          example: "New Schedule Name"
+        sections_attributes:
+          type: array
+          items:
+            type: object
+          example:
+            - id: 1
+              layout_id: 1
+              starts_at: 480 // Expressed as minutes, e.g. 8am -> (8 * 60)
+              ends_at: 1200 // Expressed as minutes, e.g. 8pm -> (20 * 60)
+              monday: true
+              tuesday: true
+              wednesday: true
+              thursday: true
+              friday: true
+              saturday: false
+              sunday: false
+            - layout_id: 2
+              starts_at: 480 // Expressed as minutes, e.g. 8am -> (8 * 60)
+              ends_at: 1200 // Expressed as minutes, e.g. 8pm -> (20 * 60)
+              monday: false
+              tuesday: false
+              wednesday: false
+              thursday: false
+              friday: false
+              saturday: true
+              sunday: true
+              
+    ScheduleUpdateResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+            name:
+              type: string
+              example: "New Schedule Name"
+            section_ids:
+              type: array
+              items:
+                example: [1,2,3]
+                
+    ScheduleShowResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+            name:
+              type: string
+              example: "Schedule #1"
+            cached_slug:
+              type: string
+              example: "schedule-number-1"
+            layout_ids:
+              type: array
+              items:
+                example: [1]
+            timeslot_ids:
+              type: array
+              items:
+                example: [1]
+            screens_count:
+              type: integer
+              example: 1
+              
+    ScheduleDeleteResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+
+security:
+  - bearerAuth: []
