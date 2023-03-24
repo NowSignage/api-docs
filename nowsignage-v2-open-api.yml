@@ -25,6 +25,8 @@ tags:
     description: Operations available for NowSignage Schedules
   - name: Timeslots
     description: Operations available for NowSignage Schedule Timeslots
+  - name: Screens
+    description: Operations available for NowSignage Screens
 
 paths:
   # Playlist Routes
@@ -290,6 +292,26 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
+          
+  # Screens
+  /screens/{id}/programmes:
+    get:
+      summary: Retrieves the current schedule assigned to a screen
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Screens
+      responses:
+        200:
+          description: "Successfully retrieves the current schedule for a screen"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenScheduleIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
 
 components:
   securitySchemes:
@@ -339,6 +361,7 @@ components:
         type: string
       required: true
       description: "human readable ID of the record being accessed. e.g. summer-timetable-3."
+    
     ProfileId:
       in: path
       name: profile_id
@@ -803,6 +826,18 @@ components:
             id:
               type: integer
               example: "1"
+              
+    ScreenScheduleIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            type: object
+          example:
+            - id: 1
+              name: "My Schedule"
+              starts_at: "2023-03-01T09:32:00.000Z"
+              ends_at: null
 
 security:
   - bearerAuth: []
