@@ -403,7 +403,7 @@ components:
           schema:
             type: object
             properties:
-              user:
+              layout:
                 $ref: "#/components/schemas/LayoutCreateRequest"
                 
     LayoutUpdate:
@@ -414,7 +414,7 @@ components:
           schema:
             type: object
             properties:
-              user:
+              layout:
                 $ref: "#/components/schemas/LayoutUpdateRequest"
                 
     LayoutDelete:
@@ -436,7 +436,7 @@ components:
           schema:
             type: object
             properties:
-              user:
+              programme:
                 $ref: "#/components/schemas/ScheduleCreateRequest"
                 
     ScheduleUpdate:
@@ -447,7 +447,7 @@ components:
           schema:
             type: object
             properties:
-              user:
+              programme:
                 $ref: "#/components/schemas/ScheduleUpdateRequest"
 
   schemas:
