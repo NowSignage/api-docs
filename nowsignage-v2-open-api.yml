@@ -312,6 +312,21 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
+  /screens/{id}/programmes/{id}:
+    post:
+      summary: Assigns a schedule to a screen (with a start date/time)
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+        - in: query
+          name: starts_at
+          schema:
+            type: string
+          description: "Start date/time for the schedule, must be in the format: YYYY-MM-DD-HH-MM-SS, for example: to assign the schedule to play: 15th January 2023, at 09:15am it would look like: '2023-01-15-09-15-00'. If not provided the API defaults to the current date/time"
+      tags:
+        - Screens
+      responses:
+        200:
+          description: "Successfully assigns the schedule to the screen"
 
 components:
   securitySchemes:
@@ -393,6 +408,14 @@ components:
         type: string
       required: true
       description: "human readable ID of the Loop being accessed, e.g. lunchtime-offers."
+      
+    Date:
+      in: path
+      name: date
+      schema:
+        type: string
+      required: true
+      description: "Date/time of when the schedule should start (must be in the format: YYYY-MM-DD-HH-MM-SS), e.g. 2023-01-15-09-00-00."
 
   requestBodies:
     LayoutCreate:
