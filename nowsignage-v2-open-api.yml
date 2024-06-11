@@ -27,6 +27,8 @@ tags:
     description: Operations available for NowSignage Schedule Timeslots
   - name: Screens
     description: Operations available for NowSignage Screens
+  - name: Ad Booking
+    description: Operations available for the Ad Booking App
 
 paths:
   # Playlist Routes
@@ -294,6 +296,26 @@ paths:
           $ref: "#/components/responses/404"
           
   # Screens
+  /profiles/{profile_id}/screens:
+    post:
+      summary: Create a new screen for the profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Screens
+      requestBody:
+        $ref: "#/components/requestBodies/ScreenCreate"
+      responses:
+        200:
+          description: "Successfully created the screen"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ScreenCreateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
   /screens/{id}/programmes:
     get:
       summary: Retrieves the current schedule assigned to a screen
@@ -328,6 +350,29 @@ paths:
         200:
           description: "Successfully assigns the schedule to the screen"
 
+  # Apps
+  # Ad Booking
+  /apps/ad_booking/profiles/{profile_id}/extra_media:
+    post:
+      summary: Create a new extra medium for the profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Ad Booking
+      requestBody:
+        $ref: "#/components/requestBodies/ExtraMediaCreate"
+      responses:
+        200:
+          description: "Successfully created the screen"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtraMediaCreateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+  
 components:
   securitySchemes:
     bearerAuth:
@@ -450,6 +495,28 @@ components:
             properties:
               user:
                 $ref: "#/components/schemas/LayoutUpdateRequest"
+    
+    ScreenCreate:
+      description: "JSON representation of a screen"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              screen:
+                $ref: "#/components/schemas/ScreenCreateRequest"
+    
+    ExtraMediaCreate:
+      description: "JSON representation of a extra media"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              extra_media:
+                $ref: "#/components/schemas/ExtraMediaCreateRequest"
                 
     ScheduleCreate:
       description: "JSON representation of a schedule"
@@ -549,7 +616,59 @@ components:
               height: 100
               layer: 1
               loop_id: 2
+    
+    ScreenCreateResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "2"
+            name:
+              type: string
+              example: "My new screen"
+            cached_slug:
+              type: string
+              example: "my-new-screen"
+            location:
+              type: string
+              example: "My screen location"
+            devide_details:
+              type: object
+              example:
+                price: 150.49
+                number_of_slots: 15
+                duration_of_slots: 20
+                width: 1920
+                height: 1080
               
+    ExtraMediaCreateResponse:
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "2"
+            name:
+              type: string
+              example: "My new poster"
+            location:
+              type: string
+              example: "My poster location"
+            price:
+              type: number
+              example: 1399.99
+            category:
+              type: string
+              example: "printed"
+            extra_data:
+              type: object
+              example:
+                eco_unit: '12345'
+                rental_object: 'example'
+
     LayoutCreateResponse:
       properties:
         data:
@@ -737,6 +856,51 @@ components:
               screens_count:
                 type: integer
                 example: 1
+                
+    ScreenCreateRequest:
+      type: object
+      required:
+        - name
+        - location
+      properties:
+        name:
+          type: string
+          example: "My new screen"
+        location:
+          type: string
+          example: "My screen location"
+        device_details:
+          type: object
+          example:
+            price: 149.99
+            number_of_slots: 15
+            duration_of_slots: 20
+            width: 1920
+            height: 1080
+    
+    ExtraMediaCreateRequest:
+      type: object
+      required:
+        - name
+        - location
+      properties:
+        name:
+          type: string
+          example: "My new poster"
+        location:
+          type: string
+          example: "My poster location"
+        price:
+          type: number
+          example: 1399.99
+        category:
+          type: string
+          example: 'printed'
+        extra_data:
+          type: object
+          example:
+            eco_unit: '12345'
+            rental_object: 'example'
                 
     ScheduleCreateRequest:
       type: object
