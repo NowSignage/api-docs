@@ -68,6 +68,27 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
+    post:
+      summary: Creates a new playlist item with one or more targeted tags
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      tags:
+        - Playlists
+      requestBody:
+        $ref: "#/components/requestBodies/LoopItemCreate"
+      responses:
+        200:
+          description: "Successfully creates a new playlist item with targeted tags"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoopItemCreateResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+        404:
+          $ref: "#/components/responses/404"
           
   # Layout Routes
   /profiles/{profile_id}/layouts:
@@ -350,6 +371,156 @@ paths:
         200:
           description: "Successfully assigns the schedule to the screen"
 
+  #Assets/Image Routes
+  /profiles/{profile_id}/assets/images:
+    get:
+      summary: Returns the image assets available for the Profile.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Image Assets
+      responses:
+        200:
+          description: "Successfully retrieves the image assets for the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAssetIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Uploads an asset into the Profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/ImageAssetURLRequest"
+                - $ref: "#/components/schemas/ImageAssetBase64Request"
+            examples:
+              URLExample:
+                summary: Upload using URL
+                value:
+                  image:
+                    name: "URL_test_image"
+                    url: "https://example.com/image.png"
+              Base64Example:
+                summary: Upload using Base64
+                value:
+                  image:
+                    name: "Base64_test_image"
+                    base64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA..."
+      tags:
+        - Image Assets
+      responses:
+        200:
+          description: "Successfully created the Image Asset within the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+      
+  /assets/images/{id}:
+    put:
+      summary: Updates an image asset
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: "#/components/schemas/ImageAssetBase64Request"
+                - $ref: "#/components/schemas/ImageAssetURLRequest"
+            examples:
+              URLExample:
+                summary: Replace image using URL
+                value:
+                  image:
+                    name: "URL_test_image"
+                    url: "https://example.com/image.png"
+              Base64Example:
+                summary: Replace image using Base64
+                value:
+                  image:
+                    name: "Base64_test_image"
+                    base64: "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAA..."
+      tags:
+        - Image Assets
+      responses:
+        200:
+          description: "Successfully updated the Image Asset within the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ImageAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+  
+  # Assets/Video Routes
+  /profiles/{profile_id}/assets/videos:
+    get:
+      summary: Returns the video assets available for the Profile.
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Video Assets
+      responses:
+        200:
+          description: "Successfully retrieves the video assets for the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoAssetIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        404:
+          $ref: "#/components/responses/404"
+    post:
+      summary: Uploads a video asset into the Profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      requestBody:
+        $ref: "#/components/requestBodies/VideoAsset"
+      tags:
+        - Video Assets
+      responses:
+        200:
+          description: "Successfully created the Video Asset within the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoAssetResponse'
+        401:
+          $ref: "#/components/responses/401"
+  
+  /assets/videos/{id}:
+    put:
+      summary: Updates a video asset
+      parameters:
+        - $ref: "#/components/parameters/IntegerId"
+      requestBody:
+        $ref: "#/components/requestBodies/VideoAsset"
+      tags:
+        - Video Assets
+      responses:
+        200:
+          description: "Successfully updated the Video Asset within the Profile."
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VideoAssetResponse'
+        401:
+          $ref: "#/components/responses/401"    
+
   # Apps
   # Ad Booking
   /apps/ad_booking/profiles/{profile_id}/extra_media:
@@ -539,6 +710,28 @@ components:
             properties:
               programme:
                 $ref: "#/components/schemas/ScheduleUpdateRequest"
+    
+    LoopItemCreate:
+      description: "JSON representation of a playlist item"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              loop_item:
+                $ref: "#/components/schemas/LoopItemCreateRequest"
+    
+    VideoAsset:
+      description: "JSON representation of a Video Asset"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              video:
+                $ref: '#/components/schemas/VideoAssetRequest'
 
   schemas:
     ErrorResponse:
@@ -828,6 +1021,60 @@ components:
               end_date:
                 type: string
                 example: "2023-01-01 17:00:00"
+    
+    LoopItemCreateResponse:
+      type: object
+      properties:
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+            name:
+              type: string
+              example: "Test Loop Item"
+            duration:
+              type: integer
+              example: 60
+            position:
+              type: integer
+              example: 1
+            start_date:
+              type: string
+              example: "2023-01-01 09:00:00"
+            end_date:
+              type: string
+              example: "2023-01-01 17:00:00"
+            asset_data:
+              type: array
+              items:
+                type: object
+                properties:
+                  asset_id:
+                    type: integer
+                    example: 380
+                  checksum:
+                    type: string
+                    example: "4b3f47b6cc19ed7517543a48ba979101f5a58733812041e0dc45a45b876f8099"
+                  asset_type:
+                    type: string
+                    example: "Ads::image"
+            asset_url:
+              type: string
+              example: "https://asset_url.com/asset.jpg"
+            captions:
+              type: string
+              example: null
+            power_bi_data:
+              type: string
+              example: null
+            font_size_multiplier:
+              type: number
+              example: 1.0
+            data_feed_url:
+              type: string
+              example: null
 
     ScheduleIndexResponse:
       properties:
@@ -963,6 +1210,30 @@ components:
               saturday: true
               sunday: true
               
+    LoopItemCreateRequest:
+      properties:
+        name:
+          type: string
+          example: "Test playlist item"
+        duration:
+          type: integer
+          example: 60
+        position:
+          type: integer
+          example: 1
+        external_url:
+          type: string
+          example: ""
+        start_date:
+          type: string
+          example: "2023-01-01 09:00:00"
+        end_date:
+          type: string
+          example: "2023-01-01 09:00:00"
+        targeted_tag_list:
+          type: string
+          example: ["test_tag"]
+                
     ScheduleUpdateResponse:
       properties:
         data:
@@ -1025,6 +1296,157 @@ components:
               name: "My Schedule"
               starts_at: "2023-03-01T09:32:00.000Z"
               ends_at: null
+        
+    ImageAssetBase64Request:
+      type: object
+      required:
+        - name
+        - image
+      properties:
+        name:
+          type: string
+          example: "Burger Promo Ad"
+        url:
+          type: string
+          format: binary
+          example: ""
+          description: "HTTP URL to be uploaded into the NowSignage system."
+        base64:
+          type: string
+          format: binary
+          example: "data:image/jpeg;base64,/9j/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/..."
+          description: "Base64 string to be decoded and uploaded into the NowSignage system."
+    
+    ImageAssetURLRequest:
+      type: object
+      required:
+        - name
+        - image
+      properties:
+        name:
+          type: string
+          example: "Burger Promo Ad"
+        url:
+          type: string
+          format: binary
+          example: "https://s3.nowsignage.com/media/2017/01/01/burger-ad.png"
+          description: "HTTP URL to be uploaded into the NowSignage system."
+        base64:
+          type: string
+          format: binary
+          example: ""
+          description: "Base64 string to be decoded and uploaded into the NowSignage system."
+    
+    VideoAssetRequest:
+      type: object
+      required:
+        - name
+        - video
+      properties:
+        name:
+          type: string
+          example: "A/W 2018 Collection"
+        url:
+          type: string
+          format: binary
+          example: "https://s3.nowsignage.com/media/2017/01/01/new-releases.mp4"
+          description: "HTTP Video URL to be uploaded into the NowSignage system."
+    
+    Image:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Burger Promo Ad"
+        image_name:
+          type: string
+          example: "burger-promo.png"
+        checksum:
+          type: string
+          example: "bac9e5f7af5deb7ca5ccbe4f919ef7918b8f65f33adfcbda68fb6f6694f424c1"
+          description: "Our hash of the contents of the original file uploaded."
+        orientation:
+          type: string
+          example: "portrait"
+          description: "The orientation of the image that was uploaded."
+    
+    Video:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 12345
+        name:
+          type: string
+          example: "Burger Promo Ad"
+        image_name:
+          type: string
+          example: "burger-promo.mp4"
+        checksum:
+          type: string
+          example: "bac9e5f7af5deb7ca5ccbe4f919ef7918b8f65f33adfcbda68fb6f6694f424c1"
+          description: "Our hash of the contents of the original file uploaded."
+        duration:
+          type: integer
+          example: 45
+          description: "The length of the video uploaded."
+        orientation:
+          type: string
+          example: "landscape"
+          description: "The orientation of the image that was uploaded."
 
+    Pagination:
+      type: object
+      properties:
+        page:
+          type: integer
+          example: 1
+        pages:
+          type: integer
+          example: 10
+        per_page:
+          type: integer
+          example: 10
+        from:
+          type: integer
+          example: 1
+        to:
+          type: integer
+          example: 10
+
+    ImageAssetIndexResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Image"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    ImageAssetResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Image"
+    
+    VideoAssetIndexResponse:
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/Video"
+        pagination:
+          $ref: "#/components/schemas/Pagination"
+
+    VideoAssetResponse:
+      type: object
+      properties:
+        data:
+          $ref: "#/components/schemas/Video"
 security:
   - bearerAuth: []
