@@ -1221,6 +1221,15 @@ components:
         position:
           type: integer
           example: 1
+        asset:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: "1"
+            type:
+              type: string
+              example: "image"
         external_url:
           type: string
           example: ""
