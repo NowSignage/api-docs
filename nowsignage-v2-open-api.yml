@@ -12,7 +12,7 @@ info:
   title: NowSignage API
   contact:
     name: the NowSignage Engineering Team
-    email: info@nowsignage.com
+    email: dev@nowsignage.com 
 
 tags:
   - name: Playlists
@@ -315,7 +315,7 @@ paths:
           $ref: "#/components/responses/401"
         404:
           $ref: "#/components/responses/404"
-          
+
   # Screens
   /profiles/{profile_id}/screens:
     post:
@@ -523,6 +523,213 @@ paths:
 
   # Apps
   # Ad Booking
+  /apps/ad_booking/profiles/{profile_id}/campaigns:
+    get:
+      summary: Get a list of campaign from the profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - in: query
+          name: status
+          schema:
+            type: string
+          required: false
+          description: "filter by the status of the campaigns, e.g. 'confirmed'"
+        - in: query
+          name: brand_id
+          schema:
+            type: integer
+          required: false
+          description: ""
+        - in: query
+          name: page
+          schema:
+            type: integer
+          required: false
+          description: ""
+      tags:
+        - Ad Booking
+
+      responses:
+        200:
+          description: "List of paginated campaigns"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingCampaignIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    post:
+      summary: Create a new campaign for the profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+      tags:
+        - Ad Booking
+      requestBody:
+        $ref: "#/components/requestBodies/AdBookingCampaignCreate"
+      responses:
+        200:
+          description: "Successfully created the screen"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingCampaignResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+  /apps/ad_booking/profiles/{profile_id}/campaigns/{campaign_id}:
+    get:
+      summary: Get a campaign from the profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+      tags:
+        - Ad Booking
+      responses:
+        200:
+          description: "List of paginated campaigns"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingCampaignResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    put:
+      summary: Update a campaign from a profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+      tags:
+        - Ad Booking
+      requestBody:
+        $ref: "#/components/requestBodies/AdBookingCampaignUpdate"
+      responses:
+        200:
+          description: "The updated campaign"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingCampaignResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    delete:
+      summary: Delete a campaign from a profile
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+      tags:
+        - Ad Booking
+      responses:
+        200:
+          description: "Confirmation of delete"
+          
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+  
+  /apps/ad_booking/profiles/{profile_id}/campaigns/{campaign_id}/records:
+    get:
+      summary: Get the records from a campaign
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+      tags:
+        - Ad Booking
+      responses:
+        200:
+          description: "List of paginated records from a campaign"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingCampaignRecordIndexResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    post:
+      summary: Create a new record for the campaign
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+      tags:
+        - Ad Booking
+      requestBody:
+        $ref: "#/components/requestBodies/AdBookingCampaignRecordCreate"
+      responses:
+        200:
+          description: "Successfully created the screen"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingRecordResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+          
+  /apps/ad_booking/profiles/{profile_id}/campaigns/{campaign_id}/records/{record_id}:
+    get:
+      summary: Get a record from a campaign
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+        - $ref: "#/components/parameters/RecordId"
+      tags:
+        - Ad Booking
+      responses:
+        200:
+          description: "Record from a campaign"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingRecordResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    put:
+      summary: Update a record from a campaign
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+        - $ref: "#/components/parameters/RecordId"
+      tags:
+        - Ad Booking
+      requestBody:
+        $ref: "#/components/requestBodies/AdBookingCampaignRecordCreate"
+      responses:
+        200:
+          description: "The updated campaign"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdBookingRecordResponse'
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
+    delete:
+      summary: Delete a record from a campaign
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CampaignId"
+        - $ref: "#/components/parameters/RecordId"
+      tags:
+        - Ad Booking
+      responses:
+        200:
+          description: "The updated campaign"
+        401:
+          $ref: "#/components/responses/401"
+        403:
+          $ref: "#/components/responses/403"
   /apps/ad_booking/profiles/{profile_id}/extra_media:
     post:
       summary: Create a new extra medium for the profile
@@ -625,6 +832,22 @@ components:
       required: true
       description: "human readable ID of the Loop being accessed, e.g. lunchtime-offers."
       
+    CampaignId:
+      in: path
+      name: campaign_id
+      schema:
+        type: integer
+      required: true
+      description: "numerical ID of the campaign being accessed. e.g. 8654."
+      
+    RecordId:
+      in: path
+      name: record_id
+      schema:
+        type: integer
+      required: true
+      description: "numerical ID of the record being accessed. e.g. 14335."
+      
     Date:
       in: path
       name: date
@@ -677,6 +900,39 @@ components:
             properties:
               screen:
                 $ref: "#/components/schemas/ScreenCreateRequest"
+    
+    AdBookingCampaignCreate:
+      description: "JSON representation of a campaign"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              campaign:
+                $ref: "#/components/schemas/AdBookingCampaignCreateRequest"
+                
+    AdBookingCampaignUpdate:
+      description: "JSON representation of a layout"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              campaign:
+                $ref: "#/components/schemas/AdBookingCampaignUpdateRequest"
+    
+    AdBookingCampaignRecordCreate:
+      description: "JSON representation of a campaign"
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              record:
+                $ref: "#/components/schemas/AdBookingCampaignRecordCreateRequest"
     
     ExtraMediaCreate:
       description: "JSON representation of a extra media"
@@ -835,7 +1091,120 @@ components:
                 duration_of_slots: 20
                 width: 1920
                 height: 1080
-              
+         
+    AdBookingCampaignIndexResponse:
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdBookingResponse'
+
+    AdBookingResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 496
+        name:
+          type: string
+          example: "Summer Campaign 24"
+        status:
+          type: string
+          example: "draft"
+        brand:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 33
+            name:
+              type: string
+              example: 'NowSignage'
+            customer_name:
+              type: string
+              example: 'Ad seller company'
+            customer_email:
+              type: string
+              example: 'example@test.com'
+        from:
+          type: string
+          format: date
+          example: "2023-01-01 09:00:00"
+        to:
+          type: string
+          format: date
+          example: "2023-01-01 09:00:00"
+        price:
+          type: number
+          example: 1254.95
+        currency:
+          type: string
+          example: '$'
+        discount:
+          type: integer
+          example: 1
+        total_discount:
+          type: integer
+          example: 125.5
+        notes:
+          type: string
+          example: 'Additional notes about the campaign'
+          
+    AdBookingRecordResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+          example: 496
+        campaign_id:
+          type: integer
+          example: 33
+        resource:
+          type: object
+          properties:
+            id:
+              type: integer
+              example: 11
+            type:
+              type: string
+              example: 'Screen'
+            name:
+              type: string
+              example: '4k Hall display 1'
+        artwork_url:
+          type: string
+          example: 'https:://url_for_the_image.com/eaxmple'
+        price:
+          type: number
+          example: 215.35
+        currency:
+          type: string
+          example: '$'
+        discount:
+          type: integer
+          example: 1
+        free:
+          type: boolean
+          example: false
+        total_discount:
+          type: integer
+          example: 125.5
+        notes:
+          type: string
+          example: 'Additional notes about the campaign'
+
+    AdBookingCampaignResponse:
+      properties:
+        data:
+          $ref: '#/components/schemas/AdBookingResponse'
+  
+    AdBookingCampaignRecordIndexResponse:
+     properties:
+      data:
+        type: array
+        items:
+          $ref: '#/components/schemas/AdBookingRecordResponse'
+
     ExtraMediaCreateResponse:
       properties:
         data:
@@ -1124,6 +1493,75 @@ components:
             duration_of_slots: 20
             width: 1920
             height: 1080
+    
+    AdBookingCampaignCreateRequest:
+      type: object
+      required:
+        - name
+        - brand_id
+        - from
+        - to
+      properties:
+        name:
+          type: string
+          example: "Campaign Summer 24"
+        brand_id:
+          type: integer
+          example: 74
+        from:
+          type: string
+          format: date
+          example: "2024-06-01 09:00:00"
+        to:
+          type: string
+          format: date
+          example: "2023-06-31 23:59:00"
+    
+    AdBookingCampaignUpdateRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          example: "Campaign Summer 24"
+        from:
+          type: string
+          format: date
+          example: "2024-06-01 09:00:00"
+        to:
+          type: string
+          format: date
+          example: "2023-06-31 23:59:00"
+        status:
+          type: string
+          example: "confirmed"
+        discount:
+          type: integer
+          example: 15
+    
+    AdBookingCampaignRecordCreateRequest:
+      type: object
+      required:
+        - resource_type
+        - resource_id
+      properties:
+        resource_type:
+          type: string
+          example: "Screen"
+        resource_id:
+          type: integer
+          example: 74
+        artwork_url:
+          type: string
+          example: 'https:://url_to_the_image.com/test'
+        discount:
+          type: integer
+          example: 15
+        free:
+          type: boolean
+          example: false
+        notes:
+          type: string
+          example: Additional notes about the campaign record
     
     ExtraMediaCreateRequest:
       type: object
