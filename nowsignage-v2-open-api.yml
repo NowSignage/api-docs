@@ -371,6 +371,74 @@ paths:
         200:
           description: "Successfully assigns the schedule to the screen"
 
+  /profiles/{profile_id}/screens/{screen_id}/remote_device_actions/reboot:
+    post:
+      summary: Reboot a screen remotely
+      parameters:
+        - $ref: "#/components/parameters/ProfileId"
+        - $ref: "#/components/parameters/CachedSlug"
+      tags:
+        - Screens
+      responses:
+        200:
+          description: Reboot request processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                online:
+                  summary: Screen online
+                  value:
+                    message: "Reboot request sent"
+                offline:
+                  summary: Screen offline (queued)
+                  value:
+                    message: "Screen is offline. Action will be executed on next connection"
+
+        400:
+          description: Screen cannot be rebooted due to validation rules
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+              examples:
+                never_connected:
+                  summary: Screen has never been connected
+                  value:
+                    errors: "This screen has never been connected. This action will not be performed"
+                unsupported_os:
+                  summary: OS does not support reboot action
+                  value:
+                    errors: "This screen OS does not support remote reboot. This action will not be performed"
+                old_app_version:
+                  summary: App version too old
+                  value:
+                    errors: "Screen has an app version older than 5.2.60. This action will not be performed"
+
+        404:
+          description: Screen not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: string
+                    example: "Screen not found"
+
+        401:
+          $ref: "#/components/responses/401"
+
+        403:
+          $ref: "#/components/responses/403"
+
   #Assets/Image Routes
   /profiles/{profile_id}/assets/images:
     get:
